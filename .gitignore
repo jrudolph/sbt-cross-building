@@ -1,0 +1,6 @@
+/.idea/
+/project/boot/
+/project/plugins/project
+target/
+test-output/
+*.iml
