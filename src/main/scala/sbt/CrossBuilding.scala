@@ -1,9 +1,19 @@
+/* sbt -- Simple Build Tool
+ * Copyright 2011, 2012 Mark Harrah, Johannes Rudolph
+ *
+ * I copied and adapted this from xsbt/main/Defaults.scala
+ */
+
 package sbt
 
 import Keys._
 
 /**
- * This is copied almost verbatim from xsbt/main/Defaults.scala
+ * The idea here is to be able to define a "sbtVersion in sbtPlugin" which
+ * directs the dependencies of the plugin to build to the specified sbt plugin
+ * version.
+ *
+ * More work is needed to make that work properly for sbt >= 0.12.
  */
 object CrossBuilding {
 
