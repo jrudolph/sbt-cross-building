@@ -16,10 +16,10 @@ Add
 
 to your ``project/plugins.sbt`` and you are ready to go.
 
-Set `sbtVersion in sbtPlugin` to the sbt version you want to build against.for example by
+Set `sbtVersion in sbtPlugin` to the sbt version you want to build against. For example by
 running
 
-   set sbtVersion in sbtPlugin := "0.11.0"
+    set sbtVersion in sbtPlugin := "0.11.0"
 
 in the sbt console.
 
