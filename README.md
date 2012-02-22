@@ -35,3 +35,5 @@ in the sbt console.
 ## License
 
 Copyright (c) 2012 Johannes Rudolph
+
+Published under the [BSD 2-Clause License](http://www.opensource.org/licenses/BSD-2-Clause).
