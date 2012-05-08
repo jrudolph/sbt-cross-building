@@ -30,12 +30,7 @@ object CrossBuilding {
 
   def sbtDependencyForVersion(app: xsbti.AppConfiguration, version: String): ModuleID = {
     val id = app.provider.id
-    val cross =
-      if (version startsWith "0.12")
-        false
-      else
-        true
-
+    val cross = usesCrossBuilding(version)
     val groupId = groupIdByVersion(version)
 
     val base = ModuleID(groupId, id.name, version, crossVersion = cross)
@@ -50,6 +45,12 @@ object CrossBuilding {
       "org.scala-tools.sbt"
     case _ =>
       "org.scala-sbt"
+  }
+  def usesCrossBuilding(version: String): Boolean = version match {
+    case Version(major, _, _) if major.toInt >= 12 =>
+      false
+    case _ =>
+      true
   }
 
   def pluginProjectID = (sbtVersion in sbtPlugin, scalaVersion, projectID, sbtPlugin) {
