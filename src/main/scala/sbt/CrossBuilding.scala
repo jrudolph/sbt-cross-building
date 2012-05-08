@@ -30,14 +30,26 @@ object CrossBuilding {
 
   def sbtDependencyForVersion(app: xsbti.AppConfiguration, version: String): ModuleID = {
     val id = app.provider.id
-    val (groupId, cross) =
+    val cross =
       if (version startsWith "0.12")
-        ("org.scala-sbt", false)
+        false
       else
-        (id.groupID, true)
+        true
+
+    val groupId = groupIdByVersion(version)
 
     val base = ModuleID(groupId, id.name, version, crossVersion = cross)
     IvySbt.substituteCross(base, app.provider.scalaProvider.version).copy(crossVersion = false)
+  }
+
+  val Version = """0\.(\d+)\.(\d+)(?:-(.*))?""".r
+  def groupIdByVersion(version: String): String = version match {
+    case Version("11", fix, _) if fix.toInt <= 2 =>
+      "org.scala-tools.sbt"
+    case Version(major, _, _) if major.toInt < 11 =>
+      "org.scala-tools.sbt"
+    case _ =>
+      "org.scala-sbt"
   }
 
   def pluginProjectID = (sbtVersion in sbtPlugin, scalaVersion, projectID, sbtPlugin) {
