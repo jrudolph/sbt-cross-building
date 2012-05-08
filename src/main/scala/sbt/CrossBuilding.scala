@@ -16,16 +16,18 @@ import Keys._
  * More work is needed to make that work properly for sbt >= 0.12.
  */
 object CrossBuilding {
+  val pluginSbtVersion = sbtVersion in sbtPlugin
 
   def settings = seq(
-    crossTarget <<= (target, scalaVersion, sbtVersion in sbtPlugin, sbtPlugin, crossPaths)(Defaults.makeCrossTarget),
+    crossTarget <<= (target, scalaVersion, pluginSbtVersion, sbtPlugin, crossPaths)(Defaults.makeCrossTarget),
     allDependencies <<= (projectDependencies, libraryDependencies, sbtPlugin, sbtDependency in sbtPlugin) map {
       (projDeps, libDeps, isPlugin, sbtDep) =>
         val base = projDeps ++ libDeps
         if (isPlugin) sbtDep.copy(configurations = Some(Provided.name)) +: base else base
     },
-    sbtDependency in sbtPlugin <<= (appConfiguration, sbtVersion in sbtPlugin)(sbtDependencyForVersion),
-    projectID <<= pluginProjectID
+    sbtDependency in sbtPlugin <<= (appConfiguration, pluginSbtVersion)(sbtDependencyForVersion),
+    projectID <<= pluginProjectID,
+    unmanagedSourceDirectories <++= (pluginSbtVersion, sourceDirectory)(extraSourceFolders)
   )
 
   def sbtDependencyForVersion(app: xsbti.AppConfiguration, version: String): ModuleID = {
@@ -51,6 +53,10 @@ object CrossBuilding {
       false
     case _ =>
       true
+  }
+  def extraSourceFolders(version: String, sourceFolder: File) = version match {
+    case Version(major, _, _) =>
+      Seq(file(sourceFolder / "scala-"+major))
   }
 
   def pluginProjectID = (sbtVersion in sbtPlugin, scalaVersion, projectID, sbtPlugin) {
