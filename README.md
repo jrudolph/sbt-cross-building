@@ -28,8 +28,8 @@ to your ``project/plugins.sbt`` and you are ready to go.
 
        > set sbtVersion in sbtPlugin := "0.11.0"
 
- * Use the `^` command to execute a command for each of the sbt versions defined in the
-   `crossSbtVersions` setting
+ * Set the `CrossBuilding.crossSbtVersions` setting to a list of sbt versions to build against and then use
+   `^ <command>` to execute an sbt command for each of the sbt versions listed.
  * You can have custom (scala) source directories for particular versions of sbt. Currently, both
    `src/main/scala-sbt-0.x` or `sbt/main/scala-sbt-0.x.y` are supported. E.g. a source
    directory `src/main/scala-sbt-0.11.2` will only be used when building against sbt 0.11.2, a source
