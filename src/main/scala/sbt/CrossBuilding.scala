@@ -54,9 +54,9 @@ object CrossBuilding {
     case _ =>
       true
   }
-  def extraSourceFolders(version: String, sourceFolder: File) = version match {
-    case Version(major, _, _) =>
-      Seq(file(sourceFolder / "scala-"+major))
+  def extraSourceFolders(version: String, sourceFolder: File): Seq[File] = version match {
+    case Version(major, minor, _) =>
+      Seq(sourceFolder / ("scala-sbt-0."+major), sourceFolder / "scala-sbt-0.%s.%s".format(major, minor))
   }
 
   def pluginProjectID = (sbtVersion in sbtPlugin, scalaVersion, projectID, sbtPlugin) {
