@@ -1,0 +1,7 @@
+This version adds several features simplifying cross-building even further:
+
+ * extra source directories (e.g. `scala-sbt-0.11` and `scala-sbt-0.11.2`) for adding
+   compatibility code for particular sbt versions
+ * `^^`-command to set the sbt version to build against in the sbt shell
+ * `^`-command which runs a task with `sbtVersion in sbtPlugin` set to all versions from `crossSbtVersions`
+ * support for building 0.12.0-Beta2 plugins from an sbt 0.11.x build
