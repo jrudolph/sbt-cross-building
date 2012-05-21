@@ -12,25 +12,35 @@ This plugin tries to ease the building of plugins for older versions of sbt.
 
 Add
 
-    addSbtPlugin("net.virtual-void" % "sbt-cross-building" % "0.5.0")
+    addSbtPlugin("net.virtual-void" % "sbt-cross-building" % "0.6.0")
 
 to your ``project/plugins.sbt`` and you are ready to go.
 
-Set `sbtVersion in sbtPlugin` to the sbt version you want to build against. For example by
-running
+## Features
 
-    set sbtVersion in sbtPlugin := "0.11.0"
+ * `sbtVersion in sbtPlugin` sets the target sbt version for your plugin
+ * Use the `^^` command in the sbt shell to set the sbt version you want to build against.
+   For example, sbt version 0.11.0 is selected by running
 
-in the sbt console.
+       > ^^0.11.0
+
+   in the sbt console. That's basically equivalent to running
+
+       > set sbtVersion in sbtPlugin := "0.11.0"
+
+ * Use the `^` command to execute a command for each of the sbt versions defined in the
+   `crossSbtVersions` setting
+ * You can have custom (scala) source directories for particular versions of sbt. Currently, both
+   `src/main/scala-sbt-0.x` or `sbt/main/scala-sbt-0.x.y` are supported. E.g. a source
+   directory `src/main/scala-sbt-0.11.2` will only be used when building against sbt 0.11.2, a source
+   directory `src/main/scala-sbt-0.11` will be used for any version of sbt 0.11.x.
+ * You can build 0.12.0-Beta2 plugins from sbt 0.11.x. The right scala version will be chosen
+   automatically from the version selected.
 
 ## Known Issues
 
   - To allow building against other versions of sbt we have to rewrite a bunch of settings which are already
     defined in sbt itself. This may lead to issues, however, we've not experienced any such yet.
-
-## TODO
-
-  - Make it possible to build 0.12.x plugins from a plugin 0.11.x build.
 
 ## License
 
