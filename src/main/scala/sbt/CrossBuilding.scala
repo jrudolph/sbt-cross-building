@@ -27,7 +27,7 @@ object CrossBuilding {
     },
     sbtDependency in sbtPlugin <<= (appConfiguration, pluginSbtVersion)(sbtDependencyForVersion),
     projectID <<= pluginProjectID,
-    unmanagedSourceDirectories <++= (pluginSbtVersion, sourceDirectory)(extraSourceFolders)
+    unmanagedSourceDirectories in Compile <++= (pluginSbtVersion, sourceDirectory in Compile)(extraSourceFolders)
   )
 
   def sbtDependencyForVersion(app: xsbti.AppConfiguration, version: String): ModuleID = {
