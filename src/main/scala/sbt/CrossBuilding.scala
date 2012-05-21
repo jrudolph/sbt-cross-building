@@ -18,6 +18,8 @@ import Keys._
 object CrossBuilding {
   val pluginSbtVersion = sbtVersion in sbtPlugin
 
+  val crossSbtVersions = SettingKey[Seq[String]]("cross-sbt-versions", "The versions of Sbt used when cross-building an sbt plugin.")
+
   def settings = seq(
     crossTarget <<= (target, scalaVersion, pluginSbtVersion, sbtPlugin, crossPaths)(Defaults.makeCrossTarget),
     allDependencies <<= (projectDependencies, libraryDependencies, sbtPlugin, sbtDependency in sbtPlugin) map {
@@ -28,8 +30,11 @@ object CrossBuilding {
     sbtDependency in sbtPlugin <<= (appConfiguration, pluginSbtVersion)(sbtDependencyForVersion),
     projectID <<= pluginProjectID,
     scalaVersion <<= (pluginSbtVersion)(scalaVersionByVersion),
+    crossSbtVersions <<= pluginSbtVersion (Seq(_)),
     unmanagedSourceDirectories in Compile <++=
-      (pluginSbtVersion, sourceDirectory in Compile)(extraSourceFolders)
+      (pluginSbtVersion, sourceDirectory in Compile)(extraSourceFolders),
+
+    commands ++= Seq(SbtPluginCross.switchVersion, SbtPluginCross.crossBuild)
   )
 
   def sbtDependencyForVersion(app: xsbti.AppConfiguration, version: String): ModuleID = {
