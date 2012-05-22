@@ -36,6 +36,11 @@ to your ``project/plugins.sbt`` and you are ready to go.
    directory `src/main/scala-sbt-0.11` will be used for any version of sbt 0.11.x.
  * You can build 0.12.0-Beta2 plugins from sbt 0.11.x. The right scala version will be chosen
    automatically from the version selected.
+ * The scripted plugin shipping with sbt is incompatible with sbt-cross-building because
+   it uses the wrong sbt launcher. This plugin contains a fixed version of the scripted plugin. To make
+   it work
+     * remove the `plugins.sbt` dependency on the scripted plugin
+     * in `build.sbt` replace `seq(scriptedSettings: _*)` with `seq(CrossBuilding.scriptedSettings: _*)`
 
 ## Known Issues
 
