@@ -8,3 +8,5 @@ resolvers += Resolver.url("Typesafe repository", url("http://typesafe.artifactor
 libraryDependencies <+= sbtVersion { sv =>
   "org.scala-sbt" %% "scripted-plugin" % sv
 }
+
+addSbtPlugin("net.virtual-void" % "sbt-cross-building" % "0.6.0")
