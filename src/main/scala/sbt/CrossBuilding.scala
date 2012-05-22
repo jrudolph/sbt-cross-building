@@ -37,6 +37,8 @@ object CrossBuilding {
     commands ++= Seq(SbtPluginCross.switchVersion, SbtPluginCross.crossBuild)
   )
 
+  def scriptedSettings = SbtScriptedSupport.scriptedSettings
+
   def sbtDependencyForVersion(app: xsbti.AppConfiguration, version: String): ModuleID = {
     val id = app.provider.id
     val cross = usesCrossBuilding(version)
