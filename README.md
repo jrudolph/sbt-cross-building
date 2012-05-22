@@ -1,4 +1,4 @@
-# Sbt Cross Building Plugin
+# Sbt Cross Building Plugin [![Build Status](https://buildhive.cloudbees.com/job/jrudolph/job/sbt-cross-building/badge/icon)](https://buildhive.cloudbees.com/job/jrudolph/job/sbt-cross-building/)
 
 Building plugins for multiple versions of sbt is often cumbersome because just to build a version
 of your plugin for another version of sbt you have to change the sbt version of your plugin _build_.
