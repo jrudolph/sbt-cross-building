@@ -25,7 +25,15 @@ object SbtScriptedSupport {
   def scriptedTask: Initialize[InputTask[Unit]] = InputTask(_ => complete.Parsers.spaceDelimited("<arg>")) { result =>
     (scriptedDependencies, scriptedTests, scriptedRun, sbtTestDirectory, scriptedBufferLog, scriptedSbt, scriptedScalas, sbtLauncher, result) map {
       (deps, m, r, testdir, bufferlog, version, scriptedScalas, launcher, args) =>
-        try { r.invoke(m, testdir, bufferlog: java.lang.Boolean, version.toString, scriptedScalas.build, scriptedScalas.versions, args.toArray, launcher) }
+        val baseParams = Seq(testdir, bufferlog: java.lang.Boolean, version.toString, scriptedScalas.build, scriptedScalas.versions, args.toArray, launcher)
+        val params =
+          CrossBuilding.byMajorVersion(version) { major =>
+            if (major < 12)
+              baseParams
+            else
+              baseParams :+ Array[String]()
+          }
+        try { r.invoke(m, params: _*) }
         catch { case e: java.lang.reflect.InvocationTargetException => throw e.getCause }
     }
   }
@@ -57,6 +65,19 @@ object SbtScriptedSupport {
       mr.artifacts.head._2
     }
   )
+
+  def scriptedRunTask: Initialize[Task[Method]] = (scriptedTests, scriptedSbt) map { (m, version) =>
+    val paramTypes =
+      CrossBuilding.byMajorVersion(version) { major =>
+        if (major < 12)
+          Seq(classOf[File], classOf[Boolean], classOf[String], classOf[String], classOf[String], classOf[Array[String]], classOf[File])
+        else
+          Seq(classOf[File], classOf[Boolean], classOf[String], classOf[String], classOf[String], classOf[Array[String]], classOf[File], classOf[Array[String]])
+      }
+
+    m.getClass.getMethod("run", paramTypes: _*)
+  }
+
   def scriptedSbtName(version: String, scalaVersion: String): String =
     if (CrossBuilding.usesCrossBuilding(version))
       "scripted-sbt_" + scalaVersion
