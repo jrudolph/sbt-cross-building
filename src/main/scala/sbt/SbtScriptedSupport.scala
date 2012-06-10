@@ -39,7 +39,7 @@ object SbtScriptedSupport {
     scriptedScalas <<= (scalaVersion) { (scala) => ScriptedScalas(scala, scala) },
     libraryDependencies <++= (scriptedScalas, scriptedSbt) { (scalas, version) =>
       Seq(
-        groupIdByVersion(version) % ("scripted-sbt_" + scalas.build) % version % scriptedConf.toString,
+        groupIdByVersion(version) % scriptedSbtName(version, scalas.build) % version % scriptedConf.toString,
         groupIdByVersion(version) % "sbt-launch" % version % scriptedConf.toString from sbtLaunchUrl(version)
       )
     },
@@ -57,4 +57,9 @@ object SbtScriptedSupport {
       mr.artifacts.head._2
     }
   )
+  def scriptedSbtName(version: String, scalaVersion: String): String =
+    if (CrossBuilding.usesCrossBuilding(version))
+      "scripted-sbt_" + scalaVersion
+    else
+      "scripted-sbt"
 }
