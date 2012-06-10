@@ -57,17 +57,17 @@ object CrossBuilding {
     case _ =>
       "org.scala-sbt"
   }
-  def scalaVersionByVersion(version: String): String = version match {
-    case Version("11", _, _) => "2.9.1"
-    case Version("12", _, _) => "2.9.2"
+  def scalaVersionByVersion(version: String): String =
+    byMajorVersion(version) { major =>
+      if (major >= 12) "2.9.2" else "2.9.1"
+    }
+  def usesCrossBuilding(version: String): Boolean =
+    byMajorVersion(version)(_ < 12)
+
+  def byMajorVersion[T](version: String)(f: Int => T): T = version match {
+    case Version(m, _, _) => f(m.toInt)
   }
 
-  def usesCrossBuilding(version: String): Boolean = version match {
-    case Version(major, _, _) if major.toInt >= 12 =>
-      false
-    case _ =>
-      true
-  }
   def extraSourceFolders(version: String, sourceFolder: File): Seq[File] = version match {
     case Version(major, minor, _) =>
       Seq(sourceFolder / ("scala-sbt-0."+major), sourceFolder / "scala-sbt-0.%s.%s".format(major, minor))
