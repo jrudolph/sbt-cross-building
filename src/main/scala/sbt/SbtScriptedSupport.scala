@@ -43,7 +43,7 @@ object SbtScriptedSupport {
 
   val scriptedSettings = seq(
     ivyConfigurations += scriptedConf,
-    scriptedSbt <<= pluginSbtVersion,
+    scriptedSbt <<= pluginSbtVersion(CrossBuilding.currentCompatibleSbtVersion),
     scriptedScalas <<= (scalaVersion) { (scala) => ScriptedScalas(scala, scala) },
     libraryDependencies <++= (scriptedScalas, scriptedSbt) { (scalas, version) =>
       Seq(

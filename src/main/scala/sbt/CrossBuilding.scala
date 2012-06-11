@@ -44,11 +44,11 @@ object CrossBuilding {
     val cross = usesCrossBuilding(version)
     val groupId = groupIdByVersion(version)
 
-    val base = ModuleID(groupId, id.name, version, crossVersion = cross)
+    val base = ModuleID(groupId, id.name, currentCompatibleSbtVersion(version), crossVersion = cross)
     IvySbt.substituteCross(base, app.provider.scalaProvider.version).copy(crossVersion = false)
   }
 
-  val Version = """0\.(\d+)\.(\d+)(?:-(.*))?""".r
+  val Version = """0\.(\d+)(?:\.(\d+))?(?:-(.*))?""".r
   def groupIdByVersion(version: String): String = version match {
     case Version("11", fix, _) if fix.toInt <= 2 =>
       "org.scala-tools.sbt"
@@ -66,6 +66,10 @@ object CrossBuilding {
 
   def byMajorVersion[T](version: String)(f: Int => T): T = version match {
     case Version(m, _, _) => f(m.toInt)
+  }
+  def currentCompatibleSbtVersion(version: String): String = version match {
+    case "0.12" => "0.12.0-RC1"
+    case _ => version
   }
 
   def extraSourceFolders(version: String, sourceFolder: File): Seq[File] = version match {
