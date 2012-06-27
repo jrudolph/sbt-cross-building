@@ -27,9 +27,9 @@ object CrossBuilding {
         val base = projDeps ++ libDeps
         if (isPlugin) sbtDep.copy(configurations = Some(Provided.name)) +: base else base
     },
-    sbtDependency in sbtPlugin <<= (appConfiguration, pluginSbtVersion)(sbtDependencyForVersion),
+    sbtDependency in sbtPlugin <<= sbtModuleDependencyInit("sbt"),
     projectID <<= pluginProjectID,
-    scalaVersion <<= (pluginSbtVersion)(scalaVersionByVersion),
+    scalaVersion <<= pluginSbtVersion(scalaVersionByVersion),
     crossSbtVersions <<= pluginSbtVersion (Seq(_)),
     unmanagedSourceDirectories in Compile <++=
       (pluginSbtVersion, sourceDirectory in Compile)(extraSourceFolders),
@@ -38,15 +38,6 @@ object CrossBuilding {
   )
 
   def scriptedSettings = SbtScriptedSupport.scriptedSettings
-
-  def sbtDependencyForVersion(app: xsbti.AppConfiguration, version: String): ModuleID = {
-    val id = app.provider.id
-    val cross = usesCrossBuilding(version)
-    val groupId = groupIdByVersion(version)
-
-    val base = ModuleID(groupId, id.name, currentCompatibleSbtVersion(version), crossVersion = cross)
-    IvySbt.substituteCross(base, app.provider.scalaProvider.version).copy(crossVersion = false)
-  }
 
   val Version = """0\.(\d+)(?:\.(\d+))?(?:-(.*))?""".r
   def groupIdByVersion(version: String): String = version match {
@@ -71,6 +62,13 @@ object CrossBuilding {
     case "0.12" => "0.12.0-RC1"
     case _ => version
   }
+  def crossedName(name: String, version: String): String =
+    if (usesCrossBuilding(version)) name + "_" + scalaVersionByVersion(version) else name
+
+  def sbtModuleDependencyInit(moduleName: String) =
+    pluginSbtVersion(sbtModuleDependency(moduleName))
+  def sbtModuleDependency(moduleName: String)(version: String): ModuleID =
+    groupIdByVersion(version) % crossedName(moduleName, version) % currentCompatibleSbtVersion(version)
 
   def extraSourceFolders(version: String, sourceFolder: File): Seq[File] = version match {
     case Version(major, minor, _) =>
