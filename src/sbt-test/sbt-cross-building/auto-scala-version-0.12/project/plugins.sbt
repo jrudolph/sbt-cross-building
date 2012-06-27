@@ -1,1 +1,0 @@
-../../../scripted-plugin.sbt.template
