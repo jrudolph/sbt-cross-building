@@ -1,4 +1,0 @@
-This version adds support for scripted tests in cross-built plugins.
-  To make it work
-    * remove the `plugins.sbt` dependency on the scripted plugin
-    * in `build.sbt` replace `seq(scriptedSettings: _*)` with `seq(CrossBuilding.scriptedSettings: _*)`

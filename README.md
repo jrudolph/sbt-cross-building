@@ -1,4 +1,4 @@
-# Sbt Cross Building Plugin [![Build Status](https://buildhive.cloudbees.com/job/jrudolph/job/sbt-cross-building/badge/icon)](https://buildhive.cloudbees.com/job/jrudolph/job/sbt-cross-building/)
+# Sbt Cross Building Plugin
 
 Building plugins for multiple versions of sbt is often cumbersome because just to build a version
 of your plugin for another version of sbt you have to change the sbt version of your plugin _build_.
@@ -12,7 +12,7 @@ This plugin tries to ease the building of plugins for older versions of sbt.
 
 Add
 
-    addSbtPlugin("net.virtual-void" % "sbt-cross-building" % "0.6.0")
+    addSbtPlugin("net.virtual-void" % "sbt-cross-building" % "0.7.0")
 
 to your ``project/plugins.sbt`` and you are ready to go.
 
@@ -34,13 +34,14 @@ to your ``project/plugins.sbt`` and you are ready to go.
    `src/main/scala-sbt-0.x` or `sbt/main/scala-sbt-0.x.y` are supported. E.g. a source
    directory `src/main/scala-sbt-0.11.2` will only be used when building against sbt 0.11.2, a source
    directory `src/main/scala-sbt-0.11` will be used for any version of sbt 0.11.x.
- * You can build 0.12.0-Beta2 plugins from sbt 0.11.x. The right scala version will be chosen
-   automatically from the version selected.
+ * You can build 0.12 plugins from sbt 0.11.x. From sbt 0.12 on use "0.12" as target sbt version and the
+   plugin will choose the latest compatible sbt 0.12.x version and the right scala version.
  * The scripted plugin shipping with sbt is incompatible with sbt-cross-building because
    it uses the wrong sbt launcher. This plugin contains a fixed version of the scripted plugin. To make
    it work
      * remove the `plugins.sbt` dependency on the scripted plugin
-     * in `build.sbt` replace `seq(scriptedSettings: _*)` with `seq(CrossBuilding.scriptedSettings: _*)`
+     * in your build replace `scriptedSettings` with `CrossBuilding.scriptedSettings`
+ * The plugin works for sbt 0.11.2, 0.11.3 and 0.12.0-x.
 
 ## Known Issues
 
