@@ -34,6 +34,8 @@ object CrossBuilding {
     unmanagedSourceDirectories in Compile <++=
       (pluginSbtVersion, sourceDirectory in Compile)(extraSourceFolders),
 
+    sbtVersion in Global in sbtPlugin <<= sbtVersion(chooseDefaultSbtVersion),
+
     commands ++= Seq(SbtPluginCross.switchVersion, SbtPluginCross.crossBuild)
   )
 
@@ -62,6 +64,11 @@ object CrossBuilding {
     case "0.12" => "0.12.0-RC3"
     case _ => version
   }
+  def chooseDefaultSbtVersion(version: String): String =
+    byMajorVersion(version) { major =>
+      if (major >= 12) "0."+major else version
+    }
+
   def crossedName(name: String, version: String): String =
     if (usesCrossBuilding(version)) name + "_" + scalaVersionByVersion(version) else name
 
