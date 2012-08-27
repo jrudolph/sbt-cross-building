@@ -1,1 +1,0 @@
-../../../project.template/plugin.sbt
