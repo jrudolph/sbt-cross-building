@@ -34,14 +34,14 @@ to your ``project/plugins.sbt`` and you are ready to go.
    `src/main/scala-sbt-0.x` or `sbt/main/scala-sbt-0.x.y` are supported. E.g. a source
    directory `src/main/scala-sbt-0.11.2` will only be used when building against sbt 0.11.2, a source
    directory `src/main/scala-sbt-0.11` will be used for any version of sbt 0.11.x.
- * You can build 0.12 plugins from sbt 0.11.x. From sbt 0.12 on use "0.12" as target sbt version and the
+ * You can build 0.12 plugins from sbt 0.11.x. Starting with sbt 0.12, use "0.12" as target sbt version and the
    plugin will choose the latest compatible sbt 0.12.x version and the right scala version.
  * The scripted plugin shipping with sbt is incompatible with sbt-cross-building because
    it uses the wrong sbt launcher. This plugin contains a fixed version of the scripted plugin. To make
    it work
      * remove the `plugins.sbt` dependency on the scripted plugin
      * in your build replace `scriptedSettings` with `CrossBuilding.scriptedSettings`
- * The plugin works for sbt 0.11.2, 0.11.3 and 0.12.0-x.
+ * The plugin works for sbt 0.11.2, 0.11.3 and 0.12.0.
 
 ## Known Issues
 

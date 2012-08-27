@@ -1,13 +1,15 @@
-This version adds support for (cross) building plugins from an sbt 0.12 plugin build and enables
+This version adds support for (cross) building plugins from an sbt 0.12 build and enables
 scripted tests in cross-built plugins.
 
 Improvements:
+
   * Add support for scripted tests by depending on the scripted plugin and fix incompatibilities
     to work in a cross-build setting
 
     To use it in you build:
-      * remove the `plugins.sbt` dependency on the scripted plugin
-      * in your build replace `scriptedSettings` with `CrossBuilding.scriptedSettings`
+
+      - remove the `plugins.sbt` dependency on the scripted plugin
+      - in your build replace `scriptedSettings` with `CrossBuilding.scriptedSettings`
 
   * Allow building 0.12 or 0.11.x plugins from sbt 0.12
 
