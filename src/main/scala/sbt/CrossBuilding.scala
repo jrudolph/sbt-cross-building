@@ -19,6 +19,7 @@ object CrossBuilding {
   val pluginSbtVersion = sbtVersion in sbtPlugin
 
   val crossSbtVersions = SettingKey[Seq[String]]("cross-sbt-versions", "The versions of Sbt used when cross-building an sbt plugin.")
+  val forceUpdate = TaskKey[Unit]("force-update", "An uncached version of `update`")
 
   def settings = seq(
     crossTarget <<= (target, scalaVersion, pluginSbtVersion, sbtPlugin, crossPaths)(Defaults.makeCrossTarget),
@@ -36,7 +37,13 @@ object CrossBuilding {
 
     sbtVersion in Global in sbtPlugin <<= sbtVersion(chooseDefaultSbtVersion),
 
-    commands ++= Seq(SbtPluginCross.switchVersion, SbtPluginCross.crossBuild)
+    commands ++= Seq(SbtPluginCross.switchVersion, SbtPluginCross.crossBuild),
+
+    forceUpdate <<= (ivyModule, updateConfiguration, streams) map { (module, config, streams) =>
+      IvyActions.update(module, config, streams.log)
+    },
+
+    deliver <<= deliver.dependsOn(forceUpdate)
   )
 
   def scriptedSettings = SbtScriptedSupport.scriptedSettings
