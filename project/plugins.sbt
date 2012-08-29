@@ -5,4 +5,4 @@ libraryDependencies += Defaults.sbtPluginExtra("me.lessis" % "ls-sbt" % "0.1.1",
 
 resolvers += Resolver.url("Typesafe repository", url("http://typesafe.artifactoryonline.com/typesafe/ivy-releases/"))(Resolver.defaultIvyPatterns)
 
-addSbtPlugin("net.virtual-void" % "sbt-cross-building" % "0.6.9")
+addSbtPlugin("net.virtual-void" % "sbt-cross-building" % "0.7.0-RC1")
