@@ -30,10 +30,15 @@ object CrossBuilding {
     },
     sbtDependency in sbtPlugin <<= sbtModuleDependencyInit("sbt"),
     projectID <<= pluginProjectID,
-    scalaVersion <<= pluginSbtVersion(scalaVersionByVersion),
+    scalaVersion <<= (scalaVersion, sbtPlugin, pluginSbtVersion) {
+      (sv, isPlugin, psbtv) =>
+        if (isPlugin) scalaVersionByVersion(psbtv) else sv
+    },
     crossSbtVersions <<= pluginSbtVersion (Seq(_)),
-    unmanagedSourceDirectories in Compile <++=
-      (pluginSbtVersion, sourceDirectory in Compile)(extraSourceFolders),
+    unmanagedSourceDirectories in Compile <++= (sourceDirectory in Compile, sbtPlugin, pluginSbtVersion) {
+      (src, isPlugin, psbtv) =>
+        if (isPlugin) extraSourceFolders(psbtv, src) else Nil
+    },
 
     sbtVersion in Global in sbtPlugin <<= sbtVersion(chooseDefaultSbtVersion),
 
