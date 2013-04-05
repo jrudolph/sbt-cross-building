@@ -12,7 +12,7 @@ This plugin tries to ease the building of plugins for older versions of sbt.
 
 Add
 
-    addSbtPlugin("net.virtual-void" % "sbt-cross-building" % "0.7.0-RC2")
+    addSbtPlugin("net.virtual-void" % "sbt-cross-building" % "0.7.0")
 
 to your ``project/plugins.sbt`` and you are ready to go.
 
