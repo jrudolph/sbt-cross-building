@@ -36,7 +36,7 @@ object CrossBuilding {
       (sv, isPlugin, psbtv) =>
         if (isPlugin) scalaVersionByVersion(psbtv) else sv
     },
-    crossSbtVersions <<= pluginSbtVersion (Seq(_)),
+    crossSbtVersions in Global <<= pluginSbtVersion (Seq(_)),
     unmanagedSourceDirectories in Compile <++= (sourceDirectory in Compile, sbtPlugin, pluginSbtVersion) {
       (src, isPlugin, psbtv) =>
         if (isPlugin) extraSourceFolders(psbtv, src) else Nil
