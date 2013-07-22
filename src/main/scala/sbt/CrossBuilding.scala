@@ -7,6 +7,8 @@
 package sbt
 
 import Keys._
+import net.virtualvoid.sbt.cross.CrossCompat
+import CrossCompat.Keys._
 
 /**
  * The idea here is to be able to define a "sbtVersion in sbtPlugin" which
@@ -22,7 +24,7 @@ object CrossBuilding {
   val forceUpdate = TaskKey[Unit]("force-update", "An uncached version of `update`")
 
   def settings = seq(
-    crossTarget <<= (target, scalaVersion, pluginSbtVersion, sbtPlugin, crossPaths)(Defaults.makeCrossTarget),
+    crossTarget <<= (target, scalaBinaryVersion, pluginSbtVersion, sbtPlugin, crossPaths)(Defaults.makeCrossTarget),
     allDependencies <<= (projectDependencies, libraryDependencies, sbtPlugin, sbtDependency in sbtPlugin) map {
       (projDeps, libDeps, isPlugin, sbtDep) =>
         val base = projDeps ++ libDeps
@@ -50,7 +52,7 @@ object CrossBuilding {
 
     deliver <<= deliver.dependsOn(forceUpdate),
     deliverLocal <<= deliverLocal.dependsOn(forceUpdate)
-  )
+  ) ++ CrossCompat.extraSettings
 
   def scriptedSettings = SbtScriptedSupport.scriptedSettings
 
@@ -93,7 +95,7 @@ object CrossBuilding {
       Seq(sourceFolder / ("scala-sbt-0."+major), sourceFolder / "scala-sbt-0.%s.%s".format(major, minor))
   }
 
-  def pluginProjectID = (sbtVersion in sbtPlugin, scalaVersion, projectID, sbtPlugin) {
+  def pluginProjectID = (sbtVersion in sbtPlugin, scalaBinaryVersion, projectID, sbtPlugin) {
     (sbtV, scalaV, pid, isPlugin) =>
       if (isPlugin) Defaults.sbtPluginExtra(pid, sbtV, scalaV) else pid
   }
