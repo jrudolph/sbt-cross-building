@@ -63,8 +63,10 @@ object CrossBuilding {
     case _ => "org.scala-sbt"
   }
   def scalaVersionByVersion(version: String): String =
-    byMajorVersion(version) { major =>
-      if (major >= 12) "2.9.2" else "2.9.1"
+    byMajorVersion(version) {
+      case 11 => "2.9.1"
+      case 12 => "2.9.2"
+      case x if x >= 13 => "2.10.2"
     }
   def usesCrossBuilding(version: String): Boolean =
     byMajorVersion(version)(_ < 12)
@@ -74,7 +76,8 @@ object CrossBuilding {
     case _ => throw new IllegalArgumentException("Illegal sbt version: '%s'" format version)
   }
   def currentCompatibleSbtVersion(version: String): String = version match {
-    case "0.12" => "0.12.3"
+    case "0.12" => "0.12.4"
+    case "0.13" => "0.13.0-RC3"
     case _ => version
   }
   def chooseDefaultSbtVersion(version: String): String =
