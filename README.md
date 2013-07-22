@@ -14,7 +14,15 @@ Add
 
     addSbtPlugin("net.virtual-void" % "sbt-cross-building" % "0.7.0-RC2")
 
-to your ``project/plugins.sbt`` and you are ready to go.
+to your ``project/plugins.sbt`` and
+
+    crossBuildingSettings
+
+to your ``build.sbt`` or if you are using full configuration (with `Build.scala`):
+
+```scala
+.settings(net.virtualvoid.sbt.cross.CrossPlugin.crossBuildingSettings: _*)
+```
 
 ## Features
 

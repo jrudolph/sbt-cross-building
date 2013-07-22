@@ -2,6 +2,8 @@ sbtVersion in sbtPlugin := "0.11.3"
 
 sbtPlugin := true
 
+crossBuildingSettings
+
 TaskKey[Unit]("check") <<= projectID map { pId =>
   println(pId)
   val sV = pId.extraAttributes("e:scalaVersion")
