@@ -21,20 +21,19 @@ object SbtScriptedSupport {
   import ScriptedPlugin._
 
   val sbtLauncher = TaskKey[File]("sbt-launcher")
+  val scriptedRunnerModule = SettingKey[ModuleID]("scripted-runner-module", "The scripted runner to use")
 
-  def scriptedTask: Initialize[InputTask[Unit]] = InputTask(_ => complete.Parsers.spaceDelimited("<arg>")) { result =>
-    (scriptedDependencies, scriptedTests, scriptedRun, sbtTestDirectory, scriptedBufferLog, scriptedSbt, scriptedScalas, sbtLauncher, result) map {
-      (deps, m, r, testdir, bufferlog, version, scriptedScalas, launcher, args) =>
-        val baseParams = Seq(testdir, bufferlog: java.lang.Boolean, version.toString, scriptedScalas.build, scriptedScalas.versions, args.toArray, launcher)
+  def scriptedTask: Initialize[InputTask[Unit]] = InputTask(_ => complete.Parsers.spaceDelimited("<arg>")) { args =>
+    (scriptedRun, scriptedTests, sbtTestDirectory, scriptedBufferLog, args, sbtLauncher) map {
+      (r, tests, testdir, bufferlog, args, launcher) =>
         val params =
-          CrossBuilding.byMajorVersion(version) { major =>
-            if (major < 12)
-              baseParams
-            else
-              baseParams :+ Array[String]()
-          }
-        try { r.invoke(m, params: _*) }
+          Seq(
+            testdir, bufferlog: java.lang.Boolean,
+            args.toArray, launcher, Array[String]())
+
+        try { r.invoke(tests, params: _*) }
         catch { case e: java.lang.reflect.InvocationTargetException => throw e.getCause }
+        finally { jline.Terminal.getTerminal.initializeTerminal() }
     }
   }
 
@@ -44,10 +43,11 @@ object SbtScriptedSupport {
   val scriptedSettings = seq(
     ivyConfigurations += scriptedConf,
     scriptedSbt <<= pluginSbtVersion(CrossBuilding.currentCompatibleSbtVersion),
-    scriptedScalas <<= (scalaVersion) { (scala) => ScriptedScalas(scala, scala) },
-    libraryDependencies <++= (scriptedScalas, scriptedSbt) { (scalas, version) =>
+    scalaVersion in scripted := "2.10.2", // TODO: infer from resolved module
+    scriptedRunnerModule := "org.scala-sbt" % "scripted-sbt" % "0.13.0-RC3" % scriptedConf.toString,
+    libraryDependencies <++= (scriptedSbt, scriptedRunnerModule) { (version, scriptedRunnerModule) =>
       Seq(
-        groupIdByVersion(version) % scriptedSbtName(version, scalas.build) % version % scriptedConf.toString,
+        scriptedRunnerModule,
         groupIdByVersion(version) % "sbt-launch" % version % scriptedConf.toString from sbtLaunchUrl(version)
       )
     },
@@ -59,6 +59,9 @@ object SbtScriptedSupport {
     scriptedRun <<= scriptedRunTask,
     scriptedDependencies <<= (compile in Test, publishLocal) map { (analysis, pub) => Unit },
     scripted <<= scriptedTask,
+    scalaInstance in scripted <<= (appConfiguration, scalaVersion in scripted).map((app, version) =>
+      ScalaInstance(version, app.provider.scalaProvider.launcher)
+    ),
 
     sbtLauncher <<= (update in scriptedConf) map { updateReport =>
       val mr = updateReport.configuration(scriptedConf.toString).get.modules.find(_.module.name == "sbt-launch").get
@@ -68,19 +71,14 @@ object SbtScriptedSupport {
 
   def scriptedRunTask: Initialize[Task[Method]] = (scriptedTests, scriptedSbt) map { (m, version) =>
     val paramTypes =
-      CrossBuilding.byMajorVersion(version) { major =>
-        if (major < 12)
-          Seq(classOf[File], classOf[Boolean], classOf[String], classOf[String], classOf[String], classOf[Array[String]], classOf[File])
-        else
-          Seq(classOf[File], classOf[Boolean], classOf[String], classOf[String], classOf[String], classOf[Array[String]], classOf[File], classOf[Array[String]])
-      }
+      Seq(classOf[File], classOf[Boolean], classOf[Array[String]], classOf[File], classOf[Array[String]])
 
     m.getClass.getMethod("run", paramTypes: _*)
   }
 
-  def scriptedSbtName(version: String, scalaVersion: String): String =
-    if (CrossBuilding.usesCrossBuilding(version))
-      "scripted-sbt_" + scalaVersion
-    else
-      "scripted-sbt"
+  def scriptedTestsTask: Initialize[Task[AnyRef]] = (scriptedClasspath, scalaInstance in scripted) map {
+    (classpath, scala) =>
+      val loader = ClasspathUtilities.toLoader(classpath, scala.loader)
+      ModuleUtilities.getObject("sbt.test.ScriptedTests", loader)
+  }
 }
