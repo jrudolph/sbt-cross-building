@@ -48,7 +48,8 @@ object CrossBuilding {
       IvyActions.update(module, config, streams.log)
     },
 
-    deliver <<= deliver.dependsOn(forceUpdate)
+    deliver <<= deliver.dependsOn(forceUpdate),
+    deliverLocal <<= deliverLocal.dependsOn(forceUpdate)
   )
 
   def scriptedSettings = SbtScriptedSupport.scriptedSettings
