@@ -71,6 +71,7 @@ object CrossBuilding {
 
   def byMajorVersion[T](version: String)(f: Int => T): T = version match {
     case Version(m, _, _) => f(m.toInt)
+    case _ => throw new IllegalArgumentException("Illegal sbt version: '%s'" format version)
   }
   def currentCompatibleSbtVersion(version: String): String = version match {
     case "0.12" => "0.12.3"
