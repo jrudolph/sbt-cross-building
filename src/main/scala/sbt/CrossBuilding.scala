@@ -7,6 +7,8 @@
 package sbt
 
 import Keys._
+import net.virtualvoid.sbt.cross.CrossCompat
+import CrossCompat.Keys._
 
 /**
  * The idea here is to be able to define a "sbtVersion in sbtPlugin" which
@@ -22,7 +24,7 @@ object CrossBuilding {
   val forceUpdate = TaskKey[Unit]("force-update", "An uncached version of `update`")
 
   def settings = seq(
-    crossTarget <<= (target, scalaVersion, pluginSbtVersion, sbtPlugin, crossPaths)(Defaults.makeCrossTarget),
+    crossTarget <<= (target, scalaBinaryVersion, pluginSbtVersion, sbtPlugin, crossPaths)(Defaults.makeCrossTarget),
     allDependencies <<= (projectDependencies, libraryDependencies, sbtPlugin, sbtDependency in sbtPlugin) map {
       (projDeps, libDeps, isPlugin, sbtDep) =>
         val base = projDeps ++ libDeps
@@ -50,22 +52,21 @@ object CrossBuilding {
 
     deliver <<= deliver.dependsOn(forceUpdate),
     deliverLocal <<= deliverLocal.dependsOn(forceUpdate)
-  )
+  ) ++ CrossCompat.extraSettings
 
   def scriptedSettings = SbtScriptedSupport.scriptedSettings
 
   val Version = """0\.(\d+)(?:\.(\d+))?(?:-(.*))?""".r
   def groupIdByVersion(version: String): String = version match {
-    case Version("11", fix, _) if fix.toInt <= 2 =>
-      "org.scala-tools.sbt"
-    case Version(major, _, _) if major.toInt < 11 =>
-      "org.scala-tools.sbt"
-    case _ =>
-      "org.scala-sbt"
+    case Version("11", fix, _) if fix.toInt <= 2 => "org.scala-tools.sbt"
+    case Version(major, _, _) if major.toInt < 11 => "org.scala-tools.sbt"
+    case _ => "org.scala-sbt"
   }
   def scalaVersionByVersion(version: String): String =
-    byMajorVersion(version) { major =>
-      if (major >= 12) "2.9.2" else "2.9.1"
+    byMajorVersion(version) {
+      case 11 => "2.9.1"
+      case 12 => "2.9.2"
+      case x if x >= 13 => "2.10.2"
     }
   def usesCrossBuilding(version: String): Boolean =
     byMajorVersion(version)(_ < 12)
@@ -75,7 +76,8 @@ object CrossBuilding {
     case _ => throw new IllegalArgumentException("Illegal sbt version: '%s'" format version)
   }
   def currentCompatibleSbtVersion(version: String): String = version match {
-    case "0.12" => "0.12.3"
+    case "0.12" => "0.12.4"
+    case "0.13" => "0.13.0-RC3"
     case _ => version
   }
   def chooseDefaultSbtVersion(version: String): String =
@@ -96,7 +98,7 @@ object CrossBuilding {
       Seq(sourceFolder / ("scala-sbt-0."+major), sourceFolder / "scala-sbt-0.%s.%s".format(major, minor))
   }
 
-  def pluginProjectID = (sbtVersion in sbtPlugin, scalaVersion, projectID, sbtPlugin) {
+  def pluginProjectID = (sbtVersion in sbtPlugin, scalaBinaryVersion, projectID, sbtPlugin) {
     (sbtV, scalaV, pid, isPlugin) =>
       if (isPlugin) Defaults.sbtPluginExtra(pid, sbtV, scalaV) else pid
   }
