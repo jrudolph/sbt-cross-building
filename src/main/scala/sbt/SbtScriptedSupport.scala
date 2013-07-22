@@ -21,15 +21,16 @@ object SbtScriptedSupport {
   import ScriptedPlugin._
 
   val sbtLauncher = TaskKey[File]("sbt-launcher")
+  val scriptedLaunchOpts = SettingKey[Seq[String]]("scripted-launch-opts", "options to pass to jvm launching scripted tasks")
   val scriptedRunnerModule = SettingKey[ModuleID]("scripted-runner-module", "The scripted runner to use")
 
   def scriptedTask: Initialize[InputTask[Unit]] = InputTask(_ => complete.Parsers.spaceDelimited("<arg>")) { args =>
-    (scriptedRun, scriptedTests, sbtTestDirectory, scriptedBufferLog, args, sbtLauncher) map {
-      (r, tests, testdir, bufferlog, args, launcher) =>
+    (scriptedRun, scriptedTests, sbtTestDirectory, scriptedBufferLog, args, sbtLauncher, scriptedLaunchOpts) map {
+      (r, tests, testdir, bufferlog, args, launcher, launchOpts) =>
         val params =
           Seq(
             testdir, bufferlog: java.lang.Boolean,
-            args.toArray, launcher, Array[String]())
+            args.toArray, launcher, launchOpts)
 
         try { r.invoke(tests, params: _*) }
         catch { case e: java.lang.reflect.InvocationTargetException => throw e.getCause }
@@ -59,6 +60,7 @@ object SbtScriptedSupport {
     scriptedRun <<= scriptedRunTask,
     scriptedDependencies <<= (compile in Test, publishLocal) map { (analysis, pub) => Unit },
     scripted <<= scriptedTask,
+    scriptedLaunchOpts := Seq(),
     scalaInstance in scripted <<= (appConfiguration, scalaVersion in scripted).map((app, version) =>
       ScalaInstance(version, app.provider.scalaProvider.launcher)
     ),
