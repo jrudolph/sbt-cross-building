@@ -1,0 +1,21 @@
+This version adds support for sbt 0.13.
+
+Important: Starting with this version you have to add `crossBuildingSettings`
+to your configuration. This was changed to adhere to the best-practices which
+helps in multi-module projects where you don't want to enable sbt-cross-building
+for all subprojects.
+
+All changes and fixes:
+
+  * [#15][]: don't mess with public settings when project is no sbt plugin
+  * [#22][]: don't deliver broken ivy.xml with `publish-local`
+  * [#14][]: use the latest scripted-sbt runner (0.13.0-RC3 for now) for all sbt versions. This
+    allows to use the latest features of the runner when building for older sbt versions.
+  * [#16][]: allow `scriptedLaunchOpts` for all sbt versions
+  * [#21][]: allow targeting sbt 0.13 from previous versions
+
+[#14]: https://github.com/jrudolph/sbt-cross-building/issues/14
+[#15]: https://github.com/jrudolph/sbt-cross-building/issues/15
+[#16]: https://github.com/jrudolph/sbt-cross-building/issues/16
+[#21]: https://github.com/jrudolph/sbt-cross-building/issues/21
+[#22]: https://github.com/jrudolph/sbt-cross-building/issues/22

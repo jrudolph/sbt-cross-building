@@ -12,7 +12,7 @@ This plugin tries to ease the building of plugins for older versions of sbt.
 
 Add
 
-    addSbtPlugin("net.virtual-void" % "sbt-cross-building" % "0.7.0")
+    addSbtPlugin("net.virtual-void" % "sbt-cross-building" % "0.8.0")
 
 to your ``project/plugins.sbt`` and
 
@@ -43,13 +43,14 @@ to your ``build.sbt`` or if you are using full configuration (with `Build.scala`
    directory `src/main/scala-sbt-0.11.2` will only be used when building against sbt 0.11.2, a source
    directory `src/main/scala-sbt-0.11` will be used for any version of sbt 0.11.x.
  * You can build 0.12 plugins from sbt 0.11.x. Starting with sbt 0.12, use "0.12" as target sbt version and the
-   plugin will choose the latest compatible sbt 0.12.x version and the right scala version.
+   plugin will choose the latest compatible sbt 0.12.x version and the right scala version. Similarly use "0.13" to
+   target sbt 0.13.
  * The scripted plugin shipping with sbt is incompatible with sbt-cross-building because
    it uses the wrong sbt launcher. This plugin contains a fixed version of the scripted plugin. To make
    it work
      * remove the `plugins.sbt` dependency on the scripted plugin
      * in your build replace `scriptedSettings` with `CrossBuilding.scriptedSettings`
- * The plugin works for sbt 0.11.2, 0.11.3 and 0.12.0.
+ * The plugin itself works for sbt 0.11.2, 0.11.3 and 0.12.x.
 
 ## Known Issues
 
