@@ -56,12 +56,9 @@ object CrossBuilding {
 
   val Version = """0\.(\d+)(?:\.(\d+))?(?:-(.*))?""".r
   def groupIdByVersion(version: String): String = version match {
-    case Version("11", fix, _) if fix.toInt <= 2 =>
-      "org.scala-tools.sbt"
-    case Version(major, _, _) if major.toInt < 11 =>
-      "org.scala-tools.sbt"
-    case _ =>
-      "org.scala-sbt"
+    case Version("11", fix, _) if fix.toInt <= 2 => "org.scala-tools.sbt"
+    case Version(major, _, _) if major.toInt < 11 => "org.scala-tools.sbt"
+    case _ => "org.scala-sbt"
   }
   def scalaVersionByVersion(version: String): String =
     byMajorVersion(version) { major =>
