@@ -30,7 +30,7 @@ object SbtScriptedSupport {
         val params =
           Seq(
             testdir, bufferlog: java.lang.Boolean,
-            args.toArray, launcher, launchOpts)
+            args.toArray[String], launcher, launchOpts.toArray[String])
 
         try { r.invoke(tests, params: _*) }
         catch { case e: java.lang.reflect.InvocationTargetException => throw e.getCause }
