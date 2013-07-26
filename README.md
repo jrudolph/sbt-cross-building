@@ -50,6 +50,7 @@ to your ``build.sbt`` or if you are using full configuration (with `Build.scala`
    it work
      * remove the `plugins.sbt` dependency on the scripted plugin
      * in your build replace `scriptedSettings` with `CrossBuilding.scriptedSettings`
+     * use a recent sbt launcher for running sbt (version >= 0.13) even for older projects
  * The plugin itself works for sbt 0.11.2, 0.11.3 and 0.12.x.
 
 ## Known Issues
