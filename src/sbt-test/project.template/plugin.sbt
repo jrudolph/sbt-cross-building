@@ -1,1 +1,1 @@
-addSbtPlugin("net.virtual-void" % "sbt-cross-building" % "0.8.0-SNAPSHOT")
+addSbtPlugin("net.virtual-void" % "sbt-cross-building" % "0.8.1-SNAPSHOT")
