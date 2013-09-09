@@ -15,6 +15,7 @@ import classpath.ClasspathUtilities
 import Keys._
 import java.lang.reflect.Method
 import Project.Initialize
+import net.virtualvoid.sbt.cross.CrossCompat
 
 object SbtScriptedSupport {
   import CrossBuilding._
@@ -34,7 +35,7 @@ object SbtScriptedSupport {
 
         try { r.invoke(tests, params: _*) }
         catch { case e: java.lang.reflect.InvocationTargetException => throw e.getCause }
-        finally { jline.Terminal.getTerminal.initializeTerminal() }
+        finally { CrossCompat.initializeTerminal() }
     }
   }
 

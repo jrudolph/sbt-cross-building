@@ -6,4 +6,7 @@ import sbt.Keys._
 object CrossCompat {
   def extraSettings = seq()
   object Keys
+  object Extras
+
+  def initializeTerminal(): Unit = jline.Terminal.getTerminal.initializeTerminal()
 }

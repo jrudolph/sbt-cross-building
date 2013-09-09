@@ -11,6 +11,7 @@ import complete.DefaultParsers._
 import complete.Parser
 import sbt.Keys._
 import Project._
+import net.virtualvoid.sbt.cross.CrossCompat.Extras._
 
 object SbtPluginCross
 {

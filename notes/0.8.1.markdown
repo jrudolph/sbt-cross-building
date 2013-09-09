@@ -1,0 +1,4 @@
+This version adds support for building _from_ sbt 0.13. From now on you can publish 0.11.x or 0.12
+plugins from a 0.13 build ([#23][]).
+
+[#23]: https://github.com/jrudolph/sbt-cross-building/issues/23

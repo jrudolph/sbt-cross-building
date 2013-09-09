@@ -25,11 +25,7 @@ object CrossBuilding {
 
   def settings = seq(
     crossTarget <<= (target, scalaBinaryVersion, pluginSbtVersion, sbtPlugin, crossPaths)(Defaults.makeCrossTarget),
-    allDependencies <<= (projectDependencies, libraryDependencies, sbtPlugin, sbtDependency in sbtPlugin) map {
-      (projDeps, libDeps, isPlugin, sbtDep) =>
-        val base = projDeps ++ libDeps
-        if (isPlugin) sbtDep.copy(configurations = Some(Provided.name)) +: base else base
-    },
+    SbtCrossCompat.allDependenciesSetting,
     sbtDependency in sbtPlugin <<= sbtModuleDependencyInit("sbt"),
     projectID <<= pluginProjectID,
     scalaVersion <<= (scalaVersion, sbtPlugin, pluginSbtVersion) {

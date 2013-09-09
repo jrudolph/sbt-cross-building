@@ -11,4 +11,7 @@ object CrossCompat {
   object Keys {
     val scalaBinaryVersion = SettingKey[String]("scala-binary-version", "The Scala version substring describing binary compatibility.")
   }
+  object Extras
+
+  def initializeTerminal(): Unit = jline.Terminal.getTerminal.initializeTerminal()
 }
