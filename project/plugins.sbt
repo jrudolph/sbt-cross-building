@@ -5,4 +5,4 @@ resolvers ++= Seq(
   "coda hale's repo" at "http://repo.codahale.com"
 )
 
-addSbtPlugin("net.virtual-void" % "sbt-cross-building" % "0.8.0")
+addSbtPlugin("net.virtual-void" % "sbt-cross-building" % "0.8.1")
