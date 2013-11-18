@@ -44,14 +44,26 @@ to your ``build.sbt`` or if you are using full configuration (with `Build.scala`
    directory `src/main/scala-sbt-0.11` will be used for any version of sbt 0.11.x.
  * You can build 0.12 plugins from sbt 0.11.x. Starting with sbt 0.12, use "0.12" as target sbt version and the
    plugin will choose the latest compatible sbt 0.12.x version and the right scala version. Similarly use "0.13" to
-   target sbt 0.13.
+   target sbt 0.13. For building against one of the newer sbt versions that use binary compatible versions (sbt >= 0.12)
+   the plugin automatically chooses a concrete sbt version to build against. The built-in mapping always uses the latest
+   final compatible version of sbt that was available when a version of sbt-cross-building was released. To override that mapping
+   you can use a setting like this:
+
+```scala
+sbt.CrossBuilding.latestCompatibleVersionMapper ~= {
+  original => {
+    case "0.13" => "0.13.1-RC2"
+    case x => original(x)
+  }
+}
+```
  * The scripted plugin shipping with sbt is incompatible with sbt-cross-building because
    it uses the wrong sbt launcher. This plugin contains a fixed version of the scripted plugin. To make
    it work
      * remove the `plugins.sbt` dependency on the scripted plugin
      * in your build replace `scriptedSettings` with `CrossBuilding.scriptedSettings`
      * use a recent sbt launcher for running sbt (version >= 0.13) even for older projects
- * The plugin itself works for sbt 0.11.2, 0.11.3 and 0.12.x.
+ * The plugin itself works for sbt 0.11.2, 0.11.3, 0.12.x, and 0.13.x.
 
 ## Known Issues
 

@@ -22,6 +22,10 @@ object CrossBuilding {
 
   val crossSbtVersions = SettingKey[Seq[String]]("cross-sbt-versions", "The versions of Sbt used when cross-building an sbt plugin.")
   val forceUpdate = TaskKey[Unit]("force-update", "An uncached version of `update`")
+  val latestCompatibleVersionMapper =
+    SettingKey[String => String](
+      "cross-latest-compatible-version-mapper",
+      "A mapping from binary compatible version to the full version to use for building")
 
   def settings = seq(
     crossTarget <<= (target, scalaBinaryVersion, pluginSbtVersion, sbtPlugin, crossPaths)(Defaults.makeCrossTarget),
@@ -45,6 +49,8 @@ object CrossBuilding {
     forceUpdate <<= (ivyModule, updateConfiguration, streams) map { (module, config, streams) =>
       IvyActions.update(module, config, streams.log)
     },
+
+    latestCompatibleVersionMapper := currentCompatibleSbtVersion,
 
     deliver <<= deliver.dependsOn(forceUpdate),
     deliverLocal <<= deliverLocal.dependsOn(forceUpdate)
@@ -85,9 +91,9 @@ object CrossBuilding {
     if (usesCrossBuilding(version)) name + "_" + scalaVersionByVersion(version) else name
 
   def sbtModuleDependencyInit(moduleName: String) =
-    pluginSbtVersion(sbtModuleDependency(moduleName))
-  def sbtModuleDependency(moduleName: String)(version: String): ModuleID =
-    groupIdByVersion(version) % crossedName(moduleName, version) % currentCompatibleSbtVersion(version)
+    (pluginSbtVersion, latestCompatibleVersionMapper)(sbtModuleDependency(moduleName))
+  def sbtModuleDependency(moduleName: String)(version: String, compatibleVersion: String => String): ModuleID =
+    groupIdByVersion(version) % crossedName(moduleName, version) % compatibleVersion(version)
 
   def extraSourceFolders(version: String, sourceFolder: File): Seq[File] = version match {
     case Version(major, minor, _) =>
