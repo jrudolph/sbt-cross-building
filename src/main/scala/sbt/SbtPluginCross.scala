@@ -30,6 +30,14 @@ object SbtPluginCross
 	lazy val switchVersion = Command.arb(requireSession(switchParser)) { case (state, (version, command)) =>
 		val x = Project.extract(state)
 	  import x._
+    version match {
+      case v@CrossBuilding.Version(major, minor, null) if (minor ne null) && major.toInt >= 12 =>
+         println(
+           "WARNING: Setting version to '%s' is probably not what you intended. For " +
+           "binary-compatible building against sbt 0.%s.x please use version '0.%s'" format (v, major, major))
+      case _ =>
+    }
+
 		println("Setting `sbtVersion in sbtPlugin` to " + version)
 		val add = (sbtVersion in GlobalScope in sbtPlugin :== version) :: Nil
 		val cleared = session.mergeSettings.filterNot( crossExclude )

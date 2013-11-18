@@ -5,5 +5,6 @@ Other changes:
   * introduced `latestCompatibleVersionMapper` setting which allows to customize which concrete version the
     plugin should choose for a binary compatible one (e.g. build against "0.13.1-RC2" instead of "0.13.0" when using
     `^^0.13`).
+  * warn when using concrete sbt version instead of binary compatible (e.g. in `^^0.13.0` instead of `^^0.13`)
 
 [#23]: https://github.com/jrudolph/sbt-cross-building/issues/23
