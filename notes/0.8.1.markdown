@@ -2,8 +2,9 @@ This version adds support for building _from_ sbt 0.13. From now on you can publ
 plugins from a 0.13 build ([#23][]).
 
 Other changes:
+
   * introduced `latestCompatibleVersionMapper` setting which allows to customize which concrete version the
-    plugin should choose for a binary compatible one (e.g. build against "0.13.1-RC2" instead of "0.13.0" when using
+    plugin should choose for a binary compatible one (e.g. to build against "0.13.1-RC2" instead of "0.13.0" when using
     `^^0.13`).
   * warn when using concrete sbt version instead of binary compatible (e.g. in `^^0.13.0` instead of `^^0.13`)
 
