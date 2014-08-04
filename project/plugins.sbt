@@ -1,4 +1,4 @@
-addSbtPlugin("me.lessis" % "ls-sbt" % "0.1.2")
+addSbtPlugin("me.lessis" % "ls-sbt" % "0.1.3")
 
 resolvers ++= Seq(
   Resolver.url("Typesafe repository", url("http://typesafe.artifactoryonline.com/typesafe/ivy-releases/"))(Resolver.defaultIvyPatterns),

@@ -14,7 +14,7 @@ libraryDependencies <+= CrossBuilding.sbtModuleDependencyInit("scripted-plugin")
 crossBuildingSettings
 
 CrossBuilding.latestCompatibleVersionMapper ~= { mapper => version => version match {
-    case "0.13" => "0.13.2"
+    case "0.13" => "0.13.5"
     case x => mapper(x)
   }
 }
