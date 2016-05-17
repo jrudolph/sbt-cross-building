@@ -14,7 +14,20 @@ libraryDependencies <+= CrossBuilding.sbtModuleDependencyInit("scripted-plugin")
 crossBuildingSettings
 
 CrossBuilding.latestCompatibleVersionMapper ~= { mapper => version => version match {
-    case "0.13" => "0.13.2"
+    case "0.13" => "0.13.9"
     case x => mapper(x)
+  }
+}
+
+// Replace hard coded reference to defunct typesafe artifactory repository
+libraryDependencies ~= { oldDeps =>
+  oldDeps.map {
+    case sbtLaunch if sbtLaunch.name == "sbt-launch" =>
+      sbtLaunch.copy(explicitArtifacts = sbtLaunch.explicitArtifacts.map { artifact =>
+        artifact.copy(url = artifact.url.map { theUrl =>
+          url(theUrl.toString.replace("http://typesafe.artifactoryonline.com", "https://dl.bintray.com"))
+        })
+      })
+    case other => other
   }
 }
