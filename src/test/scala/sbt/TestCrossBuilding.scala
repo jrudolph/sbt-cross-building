@@ -27,5 +27,8 @@ class TestCrossBuilding extends Specification {
     "0.13.0" in {
       CrossBuilding.groupIdByVersion("0.13.0") must be_==(ScalaSbt)
     }
+    "1.0" in {
+      CrossBuilding.groupIdByVersion("1.0.0") must be_==(ScalaSbt)
+    }
   }
 }
