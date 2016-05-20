@@ -40,20 +40,20 @@ object SbtScriptedSupport {
   }
 
   def sbtLaunchUrl(version: String) =
-    "http://typesafe.artifactoryonline.com/typesafe/ivy-releases/%s/sbt-launch/%s/sbt-launch.jar" format (groupIdByVersion(version), version)
+    "https://dl.bintray.com/typesafe/ivy-releases/%s/sbt-launch/%s/sbt-launch.jar" format (groupIdByVersion(version), version)
 
   val scriptedSettings = seq(
     ivyConfigurations += scriptedConf,
     scriptedSbt <<= pluginSbtVersion(CrossBuilding.currentCompatibleSbtVersion),
-    scalaVersion in scripted := "2.10.2", // TODO: infer from resolved module
-    scriptedRunnerModule := "org.scala-sbt" % "scripted-sbt" % "0.13.0-RC3" % scriptedConf.toString,
+    scalaVersion in scripted := "2.10.5", // TODO: infer from resolved module
+    scriptedRunnerModule := "org.scala-sbt" % "scripted-sbt" % "0.13.11" % scriptedConf.toString,
     libraryDependencies <++= (scriptedSbt, scriptedRunnerModule) { (version, scriptedRunnerModule) =>
       Seq(
         scriptedRunnerModule,
         groupIdByVersion(version) % "sbt-launch" % version % scriptedConf.toString from sbtLaunchUrl(version)
       )
     },
-    resolvers += Resolver.url("Typesafe repository", url("http://typesafe.artifactoryonline.com/typesafe/ivy-releases/"))(Resolver.defaultIvyPatterns),
+    resolvers += Resolver.url("Typesafe repository", url("https://dl.bintray.com/typesafe/ivy-releases/"))(Resolver.defaultIvyPatterns),
     sbtTestDirectory <<= sourceDirectory / "sbt-test",
     scriptedBufferLog := true,
     scriptedClasspath <<= (classpathTypes, update) map { (ct, report) => PathFinder(Classpaths.managedJars(scriptedConf, ct, report).map(_.data)) },

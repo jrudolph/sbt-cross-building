@@ -68,7 +68,7 @@ object CrossBuilding {
     byMajorVersion(version) {
       case 11 => "2.9.1"
       case 12 => "2.9.2"
-      case x if x >= 13 => "2.10.2"
+      case x if x >= 13 => "2.10.5"
     }
   def usesCrossBuilding(version: String): Boolean =
     byMajorVersion(version)(_ < 12)
@@ -79,7 +79,7 @@ object CrossBuilding {
   }
   def currentCompatibleSbtVersion(version: String): String = version match {
     case "0.12" => "0.12.4"
-    case "0.13" => "0.13.2"
+    case "0.13" => "0.13.11"
     case _ => version
   }
   def chooseDefaultSbtVersion(version: String): String =
