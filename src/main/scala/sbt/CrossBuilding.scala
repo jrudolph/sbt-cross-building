@@ -58,33 +58,35 @@ object CrossBuilding {
 
   def scriptedSettings = SbtScriptedSupport.scriptedSettings
 
-  val Version = """0\.(\d+)(?:\.(\d+))?(?:-(.*))?""".r
+  val Version = """(\d+)\.(\d+)(?:\.(\d+))?(?:-(.*))?""".r
   def groupIdByVersion(version: String): String = version match {
-    case Version("11", fix, _) if fix.toInt <= 2 => "org.scala-tools.sbt"
-    case Version(major, _, _) if major.toInt < 11 => "org.scala-tools.sbt"
+    case Version("0", "11", fix, _) if fix.toInt <= 2 => "org.scala-tools.sbt"
+    case Version("0", major, _, _) if major.toInt < 11 => "org.scala-tools.sbt"
     case _ => "org.scala-sbt"
   }
   def scalaVersionByVersion(version: String): String =
     byMajorVersion(version) {
-      case 11 => "2.9.1"
-      case 12 => "2.9.2"
-      case x if x >= 13 => "2.10.5"
+      case (0, 11) => "2.9.1"
+      case (0, 12) => "2.9.2"
+      case (0, 13) => "2.10.5"
+      case (1, _) => "2.11.8"
     }
   def usesCrossBuilding(version: String): Boolean =
-    byMajorVersion(version)(_ < 12)
+    byMajorVersion(version)((epoch, major) => epoch == 0 && major < 12)
 
-  def byMajorVersion[T](version: String)(f: Int => T): T = version match {
-    case Version(m, _, _) => f(m.toInt)
+  def byMajorVersion[T](version: String)(f: (Int, Int) => T): T = version match {
+    case Version(e, m, _, _) => f(e.toInt, m.toInt)
     case _ => throw new IllegalArgumentException("Illegal sbt version: '%s'" format version)
   }
   def currentCompatibleSbtVersion(version: String): String = version match {
     case "0.12" => "0.12.4"
     case "0.13" => "0.13.11"
+    case "1.0" => "1.0.0-M4"
     case _ => version
   }
   def chooseDefaultSbtVersion(version: String): String =
-    byMajorVersion(version) { major =>
-      if (major >= 12) "0."+major else version
+    byMajorVersion(version) { (epoch, major) =>
+      if (epoch > 0 || major >= 12) epoch + "." + major else version
     }
 
   def crossedName(name: String, version: String): String =
@@ -96,9 +98,9 @@ object CrossBuilding {
     groupIdByVersion(version) % crossedName(moduleName, version) % compatibleVersion(version)
 
   def extraSourceFolders(version: String, sourceFolder: File): Seq[File] = version match {
-    case Version(major, minor, _) =>
-      Seq(sourceFolder / ("scala-sbt-0."+major)) ++
-        Option(minor).map(min => sourceFolder / "scala-sbt-0.%s.%s".format(major, min)).toSeq
+    case Version(epoch, major, minor, _) =>
+      Seq(sourceFolder / ("scala-sbt-" + epoch + "." + major)) ++
+        Option(minor).map(min => sourceFolder / "scala-sbt-%s.%s.%s".format(epoch, major, min)).toSeq
   }
 
   def pluginProjectID = (sbtVersion in sbtPlugin, scalaBinaryVersion, projectID, sbtPlugin) {

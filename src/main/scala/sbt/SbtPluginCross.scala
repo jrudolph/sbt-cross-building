@@ -31,10 +31,10 @@ object SbtPluginCross
 		val x = Project.extract(state)
 	  import x._
     version match {
-      case v@CrossBuilding.Version(major, minor, null) if (minor ne null) && major.toInt >= 12 =>
+      case v@CrossBuilding.Version(epoch, major, minor, null) if (minor ne null) && (epoch.toInt > 0 | major.toInt >= 12) =>
          println(
            "WARNING: Setting version to '%s' is probably not what you intended. For " +
-           "binary-compatible building against sbt 0.%s.x please use version '0.%s'" format (v, major, major))
+           "binary-compatible building against sbt %s.%s.x please use version '%s.%s'" format (v, epoch, major, epoch, major))
       case _ =>
     }
 
