@@ -80,7 +80,7 @@ object CrossBuilding {
   }
   def currentCompatibleSbtVersion(version: String): String = version match {
     case "0.12" => "0.12.4"
-    case "0.13" => "0.13.11"
+    case "0.13" => "0.13.13"
     case "1.0" => "1.0.0-M4"
     case _ => version
   }
