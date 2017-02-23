@@ -4,7 +4,7 @@ name := "sbt-cross-building"
 
 organization := "net.virtual-void"
 
-version := "0.8.2-SNAPSHOT"
+version := "0.9.0-M1"
 
 homepage := Some(url("http://github.com/jrudolph/sbt-cross-building"))
 

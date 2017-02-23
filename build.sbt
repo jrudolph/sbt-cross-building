@@ -5,14 +5,14 @@ libraryDependencies <+= scalaBinaryVersion {
 
 CrossBuilding.scriptedSettings
 
-CrossBuilding.crossSbtVersions := Seq("0.11.2", "0.11.3", "0.12", "0.13")
+CrossBuilding.crossSbtVersions := Seq("0.13")
 
 libraryDependencies <+= CrossBuilding.sbtModuleDependencyInit("scripted-plugin")
 
 crossBuildingSettings
 
 CrossBuilding.latestCompatibleVersionMapper ~= { mapper => version => version match {
-    case "0.13" => "0.13.9"
+    case "0.13" => "0.13.13"
     case x => mapper(x)
   }
 }
